@@ -9,10 +9,11 @@
 #define MSGTRANS_CLIENT_PACKETSERIZLIZER_H
 
 #include <vector>
+#include <evpp/buffer.h>
 #include "MessageBuffer.h"
-#include <memory>
+//#include <memory>
 
-#define MAX_NETPACK_SIZE	10000
+#define MAX_NETPACK_SIZE	5242880
 #define HEADER_LENGTH		16
 
 struct Packet
@@ -29,6 +30,11 @@ class PacketSerizlizer
 {
 public:
     PacketSerizlizer();
+
+    ~PacketSerizlizer()
+    {
+        delete[] m_last_save_data;
+    }
     /**
       * @brief 序列化message为有效的发送格式buffer
       * @param message   报文数据
@@ -37,7 +43,7 @@ public:
       * @return
       *  序列化后buffer size
       */
-    static uint32_t  Serialize(MessageBuffer &message, std::shared_ptr<char> &serizelizeBuffer);
+    static uint32_t  Serialize(std::shared_ptr<MessageBuffer> message, char*& serizelizeBuffer);
 
     /**
       * @brief 反序列化message
@@ -47,15 +53,15 @@ public:
       *
       * @return 成功 or 失败
       */
+//    bool DeSerialize(const char* data, int data_size, std::vector<std::shared_ptr<MessageBuffer>> &messages,evpp::Buffer *msg);
     bool DeSerialize(const char* data, int data_size, std::vector<std::shared_ptr<MessageBuffer>> &messages);
-
 
 private:
     int32_t bytesToInt32(char* bytes);
     int64_t bytesToInt64(char* bytes);
 
 private:
-    char m_last_save_data[MAX_NETPACK_SIZE];
+    char *m_last_save_data;
     int  m_remain_size; // 当前数据的大小
 };
 

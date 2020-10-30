@@ -30,11 +30,24 @@ public:
     void set(MessageTransportClient* transport){m_messageTransport = transport ;}
     void connect();
     bool isConnected();
-    void send(MessageBuffer& buff);
+    void send(std::shared_ptr<MessageBuffer> buff);
     void close();
+    void setOnConnect(const std::function<void(bool)>& cb)
+    {
+        m_onConnect = cb;
+    }
+    void setCloseCallBack(const std::function<void()>& cb)
+    {
+        m_onClosed = cb;
+    }
 private:
     void initialize();
     void dispatchMessage(std::shared_ptr<MessageBuffer>& message);
+    void keyExchangeInitiate();
+    void keyExchangeRequest(std::shared_ptr<MessageBuffer> message);
+
+    std::function<void(bool)> m_onConnect;
+    std::function<void()> m_onClosed;
 };
 
 

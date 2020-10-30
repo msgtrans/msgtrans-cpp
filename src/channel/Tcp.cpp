@@ -21,26 +21,44 @@ void Tcp::sendMessage(std::string msg)
 
 void Tcp::sendMessage(const void* d, size_t dlen)
 {
+    if (m_connection->IsDisconnected())
+    {
+        if(m_onClosed != nullptr)
+        {
+            m_onClosed();
+        }
+    }else
+    {
     m_connection->Send(d, dlen);
+}
 }
 
 void Tcp::close()
 {
-    m_connection->Close();
+    //m_connection->Close();
+
+
+    m_client->Disconnect();
+    //std::cout << "close!!" << std::endl;
+    m_loop.Stop();
 }
 
 void Tcp::threadSetPromise(std::string ip, int port, std::promise<bool>& promiseObj) {
     std::string addr = ip + ":" + std::to_string(port);
-    evpp::EventLoop loop;
-    evpp::TCPClient client(&loop, addr, "imsdk");
-    client.SetMessageCallback([&loop, &client, this](const evpp::TCPConnPtr &conn,
+    //evpp::EventLoop loop;
+    m_client = new evpp::TCPClient(&m_loop, addr, "imsdk");
+    m_client->set_auto_reconnect(false);
+//    client.conn()->SetCloseCallback([&](const evpp::TCPConnPtr &conn){
+//
+//    });
+    m_client->SetMessageCallback([this](const evpp::TCPConnPtr &conn,
                                                      evpp::Buffer *msg)
                               {
                                   assert(onMessage);
                                   onMessage(msg);
                               });
 
-    client.SetConnectionCallback([&](const evpp::TCPConnPtr &conn)
+    m_client->SetConnectionCallback([&promiseObj,this](const evpp::TCPConnPtr &conn)
                                  {
                                      assert(conn);
                                      assert(onConnect);
@@ -56,10 +74,11 @@ void Tcp::threadSetPromise(std::string ip, int port, std::promise<bool>& promise
                                      else
                                      {
                                          onConnect(false);
+                                         m_connection = nullptr;
                                      }
                                  });
-    client.Connect();
-    loop.Run();
+    m_client->Connect();
+    m_loop.Run();
 }
 
 void Tcp::connect(std::string ip, int port)

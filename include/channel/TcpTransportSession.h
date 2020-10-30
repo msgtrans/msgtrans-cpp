@@ -20,7 +20,7 @@ public:
 
     virtual  void setAttribute(std::string key, void *data);
     virtual  void* getAttribute(std::string key);
-    virtual  void send(MessageBuffer& buffer);
+    virtual  void send(std::shared_ptr<MessageBuffer> buffer);
     virtual  void close();
     virtual  bool isConnected();
 };

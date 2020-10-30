@@ -27,12 +27,17 @@ public:
     virtual  bool isConnected() = 0;
     virtual  void setConnectionStatus(bool status) = 0;
     virtual  void close() = 0;
+    void setCloseCallBack(const std::function<void()>& cb)
+    {
+        m_onClosed = cb;
+    }
     std::function<void(bool)> onConnect;
     std::function<void(evpp::Buffer *)> onMessage;
 
     void setAttribute(std::string key, void *data);
     void* getAttribute(std::string key);
 
+    std::function<void()> m_onClosed;
 };
 
 

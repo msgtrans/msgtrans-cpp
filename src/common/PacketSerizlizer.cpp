@@ -7,53 +7,55 @@
 
 #include "common/PacketSerizlizer.h"
 #include <cstring>
+#include <evpp/buffer.h>
 
 PacketSerizlizer::PacketSerizlizer()
 {
+    m_last_save_data = new char[MAX_NETPACK_SIZE];
     memset(m_last_save_data, 0, MAX_NETPACK_SIZE);
     m_remain_size = 0;
 }
 
-uint32_t PacketSerizlizer::Serialize(MessageBuffer &message, std::shared_ptr<char> &serizelizeBuffer)
+uint32_t PacketSerizlizer::Serialize(std::shared_ptr<MessageBuffer> message, char*& serizelizeBuffer)
 {
-    if (!message.m_data) return 0;
+    //if (message->m_data.empty()) return 0;
 
-    uint32_t slen = strlen(message.m_data);
-
+    uint32_t slen = message->m_data.length();
     uint32_t length = HEADER_LENGTH + slen;
 
-    auto buffer = std::shared_ptr<char>(new char[length]);
+    serizelizeBuffer = new char[length];
 
     int offset = 0;
-    memset(buffer.get(), 0, length);
+    memset(serizelizeBuffer, 0, length);
 
     // 小端转大端
 
-    uint32_t message_id_bigendian = __builtin_bswap32(message.m_id);
-    memcpy(buffer.get() + offset, &message_id_bigendian,  sizeof(message_id_bigendian));
+    uint32_t message_id_bigendian = __builtin_bswap32(message->m_id);
+    memcpy(serizelizeBuffer + offset, &message_id_bigendian,  sizeof(message_id_bigendian));
     offset += sizeof(message_id_bigendian);
 
     int32_t message_data_length_bigendian = __builtin_bswap32(slen);
-    memcpy(buffer.get() + offset, &message_data_length_bigendian, sizeof(message_data_length_bigendian));
+    memcpy(serizelizeBuffer + offset, &message_data_length_bigendian, sizeof(message_data_length_bigendian));
     offset += sizeof(message_data_length_bigendian);
 
-    memcpy(buffer.get() + HEADER_LENGTH, message.m_data, slen);
+    memcpy(serizelizeBuffer + HEADER_LENGTH, message->m_data.c_str(), slen);
 
-    serizelizeBuffer = buffer;
+   // serizelizeBuffer = buffer;
 
    // delete [] message.m_data;
 
     return length;
 }
 
-bool PacketSerizlizer::DeSerialize(const char* data, int data_size, std::vector<std::shared_ptr<MessageBuffer>> &messages)
+bool PacketSerizlizer::DeSerialize(const char* data, int data_size,std::vector<std::shared_ptr<MessageBuffer>> &messages)
 {
 //        std::cout << "data_size: " << data_size;
 //        printBuffer((char *) data, data_size);
 
 
+
     /* 本次接收到的数据拼接到上次数据 */
-    memcpy( (char*)(m_last_save_data) + m_remain_size, data, data_size );
+    memcpy( m_last_save_data + m_remain_size, data, data_size );
     m_remain_size += data_size;
     delete [] data;
 
@@ -92,30 +94,31 @@ bool PacketSerizlizer::DeSerialize(const char* data, int data_size, std::vector<
             /* 够一个数据包的长度 */
             if (m_remain_size >= n_message_data_length + HEADER_LENGTH )
             {
-                //char message_data[n_message_data_length];
-               // std::shared_ptr<char> message_data = std::shared_ptr<char>(new char[n_message_data_length]);
-                char * message_data = new char[n_message_data_length];
-                memset(message_data, 0, n_message_data_length);
+                char* message_data = new char[n_message_data_length+1];
+                //std::shared_ptr<char> message_data = std::shared_ptr<char>(new char[n_message_data_length]);
+               // char * message_data = new char[n_message_data_length];
+                memset(message_data, 0, n_message_data_length + 1);
                 memcpy(message_data, m_last_save_data + offset, n_message_data_length);
                 offset += n_message_data_length;
 
-                std::shared_ptr<MessageBuffer>  msg = std::make_shared<MessageBuffer> (n_message_id,message_data);
+                std::shared_ptr<MessageBuffer>  msg = std::make_shared<MessageBuffer> (n_message_id,std::string(message_data));
                // msg.auth_key_id = n_auth_key_id;
                // msg.message_id = n_message_id;
                 //msg.message_data_length = n_message_data_length;
                // msg.m_data = message_data;
                 messages.push_back(msg);
-
+                delete[] message_data;
                 //取完一个完整的数据包后，整包数据从m_last_save_data移除
                 m_remain_size = m_remain_size -  n_message_data_length - HEADER_LENGTH;
                 if(m_remain_size > 0)
                 {
-                    char left[m_remain_size];
+                    char* left  =  new char[m_remain_size];
                     memset(left, 0, m_remain_size);
                     memcpy(left, m_last_save_data + offset, m_remain_size);
 
                     memset(m_last_save_data, 0, MAX_NETPACK_SIZE);
                     memcpy(m_last_save_data, left, m_remain_size);
+                    delete [] left;
                 }
                 else
                 {

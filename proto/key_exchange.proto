@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package ee2e;  // openssl-key-exchange
+
+message KeyExchangeRequest {
+    KeyExchangeType key_exchange_type     = 1;  // Which type of KeyExchangeType to request
+    KeyInfo         key_info              = 2;  // It has value when key_exchanage_type=KEY_EXCHANGE_INITIATE
+}
+
+message EncryptedRequest {
+    Token            token           = 1;  // The token to verify the identify of the client
+    Ciphertext       ciphertext      = 2;   // It can be decrypted into PlainText message
+}
+
+
+/* -----------Type definition for request and response dependencies----------- */
+enum KeyExchangeType {
+    UNKNOWN_REQUEST_TYPE    = 0;
+    KEY_EXCHANGE_INITIATE   = 1;  // Used to initialize the key exchange sequence
+    KEY_EXCHANGE_FINALIZE   = 2;  // Used to end the keyexchange sequence and indicate the execution result
+}
+
+message KeyInfo {
+    string salt_32bytes              = 1;  // Random digit
+    string ec_public_key_65bytes   = 2;  // Public-key of EC NIST P-256
+}
+
+message Token {
+    string  salt_3bytes             = 1;  // random at each request
+    string  hmac_3bytes             = 2;  // calculated by salt_3bytes and its public-key
+}
+
+message Ciphertext {
+    int32  cipher_version          = 1;  // default 1
+    string  aes_iv_12bytes          = 2;  // randomly generated each time
+    string  ciphertext_nbytes       = 3;  // PlainText message serialized and encrypted
+    string  aes_tag_16bytes         = 4;  // generated after AES encryption
+}
+
+enum MESSAGE {
+    UNKNOWN  = 0;
+    INITIATE = 1000110001;
+    FINALIZE = 2000120001;
+}
+
+/*-----------------------------------------------------------------------------*/

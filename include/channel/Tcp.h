@@ -14,6 +14,29 @@
 #include <future>
 #include "ConnectionBase.h"
 
+using namespace evpp;
+
+class  mTcpConn : public evpp::TCPConn , public std::enable_shared_from_this<mTcpConn>
+{
+public:
+    mTcpConn(EventLoop* loop,
+    const std::string& name,
+    evpp_socket_t sockfd,
+    const std::string& laddr,
+    const std::string& raddr,
+            uint64_t id) : TCPConn(loop,name,sockfd,laddr,raddr,id)
+    {
+
+    }
+    void SetCloseCallback(CloseCallback cb)
+    {
+        SetCloseCallback(cb);
+    }
+
+};
+
+typedef std::shared_ptr<mTcpConn> mTCPConnPtr;
+
 class Tcp : public ConnectionBase
 {
 public:
@@ -35,7 +58,9 @@ private:
 
 private:
     evpp::TCPConnPtr m_connection;
+    evpp::TCPClient* m_client;
     bool m_isConnected = false;
+    evpp::EventLoop m_loop;
 };
 
 #endif //MSGTRANS_CLIENT_TCP_H

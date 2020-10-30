@@ -11,10 +11,18 @@
 #include "ClientChannel.h"
 #include <string>
 #include <memory>
+#include "crypto.h"
+
+using namespace crypto;
 
 class ClientChannel;
 
 class MessageTransportClient : public std::enable_shared_from_this<MessageTransportClient> {
+
+public:
+    static bool ee2e ;
+    ownkey_s  client_key;
+    peerkey_s server_key;
 
 private:
     bool m_isConnected = false;
@@ -22,15 +30,16 @@ private:
     std::shared_ptr<ClientChannel> m_channel;
 
 public:
-    MessageTransportClient(std::string name);
+    MessageTransportClient(std::string name , bool ee2e = false);
 
     void transport(std::shared_ptr<ClientChannel>& m_channel);
 
-    void send(MessageBuffer& buffer);
+    void send(std::shared_ptr<MessageBuffer> buffer);
 
     void close();
 
 };
+
 
 
 #endif //MSGTRANS_CLIENT_MESSAGETRANSPORTCLIENT_H

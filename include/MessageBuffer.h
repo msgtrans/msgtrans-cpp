@@ -10,23 +10,28 @@
 
 
 #include <stdint.h>
-
+#include <cstring>
+#include <memory>
+#include <iostream>
 struct MessageBuffer {
     uint32_t m_id;
-    char* m_data;
-
-    MessageBuffer(uint32_t id,   char* data)
+    std::string m_data;
+    MessageBuffer(uint32_t id, const std::string& data)
     {
         m_id = id;
+//        size_t len = strlen(data);
+//        std::cout  << "m_data length :" << len  << std::endl;
         m_data = data;
+        //memcpy(m_data, data, len);
     }
 
     ~MessageBuffer()
     {
-        if(m_data)
-        {
-            delete[] m_data;
-        }
+//        if(m_data)
+//        {
+//            delete[] m_data;
+//        }
+//        m_data = nullptr;
     }
 };
 

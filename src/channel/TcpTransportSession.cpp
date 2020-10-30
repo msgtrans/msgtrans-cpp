@@ -13,16 +13,18 @@ TcpTransportSession::TcpTransportSession(u_long id,std::shared_ptr<ConnectionBas
 
 }
 
-void TcpTransportSession::send(MessageBuffer& buffer)
+void TcpTransportSession::send(std::shared_ptr<MessageBuffer> buffer)
 {
     if (m_conn && m_conn->isConnected())
     {
-        std::shared_ptr<char> packet_buff;
+        char* packet_buff;
         uint32_t packet_length =  PacketSerizlizer::Serialize(buffer , packet_buff);
         if (packet_buff && packet_length)
         {
-            m_conn->sendMessage(packet_buff.get(), packet_length);
+            m_conn->sendMessage(packet_buff, packet_length);
+            delete [] packet_buff;
         }
+
     }
 }
 
