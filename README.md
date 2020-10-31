@@ -2,7 +2,9 @@
 MsgTrans Framework for C++ , based on libevent.
 
 
-### Build for Linux
+## Build
+
+### For Linux
 
 - OpenSSL 1.0.2u
     
@@ -78,7 +80,7 @@ $ sudo make install
 
 
 
-### Build for mac OS
+### For Mac OS
 
 - Eviroment
 
@@ -152,7 +154,6 @@ $ cd proto
 $ protoc -I=./ --cpp_out=./ *.proto
 $ cp key_exchange.pb.h ../include/ee2e
 $ cp key_exchange.pb.cc ../src/ee2e
-
 ```
 
 2. Build
@@ -163,10 +164,5 @@ $ cd build
 $ cmake ..
 $ make
 $ make install
-
-$ cp libmsgtrans_cpp.a /usr/local/lib
 ```  
-
-### TODO
-Enable `make install`
 
