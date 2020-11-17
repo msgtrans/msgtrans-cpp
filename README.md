@@ -82,7 +82,7 @@ $ sudo make install
 
 ### For Mac OS
 
-- Eviroment
+- Enviroment
 
 Edit ~/.bashrc or ~/.bash_profile or ~/.zshrc, and input 
 
