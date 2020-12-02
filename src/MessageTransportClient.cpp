@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #include <string>
 #include <memory>
@@ -19,7 +16,7 @@ MessageTransportClient::MessageTransportClient(std::string name , bool ee2e) : m
             std::cerr << "ECDH-KEY generation failed." << std::endl;
         }
         if (!crypto::rand_salt(client_key.salt, sizeof(crypto::ownkey_s::salt)))
-{
+        {
             std::cerr << "Random salt generation failed." << std::endl;
         }
     }

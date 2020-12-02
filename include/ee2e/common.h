@@ -93,7 +93,7 @@ inline bool decrypt_ciphertext(const crypto::peerkey_s &peerkey, const ee2e::Cip
 
 inline bool encrypt_plaintext(const crypto::peerkey_s &peerkey, const std::string &str_plaintext, ee2e::Ciphertext &ciphertext)
 {
-    std::string str_ciphertext(str_plaintext.length(), '\0');
+    std::string str_ciphertext(str_plaintext.size(), '\0');
     uint8_t rand_iv[CRYPTO_AES_IV_LEN];
     uint8_t aes_tag[CRYPTO_AES_TAG_LEN];
 
@@ -102,8 +102,8 @@ inline bool encrypt_plaintext(const crypto::peerkey_s &peerkey, const std::strin
     {
         return false;
     }
-
-    bool ret = crypto::aes_encrypt((unsigned char *)str_plaintext.data(), str_plaintext.length(),
+    std::cout << "str_plaintext :" << str_plaintext.size()  << std::endl;
+    bool ret = crypto::aes_encrypt((unsigned char *)str_plaintext.data(), str_plaintext.size(),
                                    peerkey.aes_key, rand_iv, (unsigned char *)&str_ciphertext[0], aes_tag);
     if (!ret)
     {
@@ -222,6 +222,7 @@ inline bool generate_token(const uint8_t ecdh_pub_key[CRYPTO_EC_PUB_KEY_LEN], ee
 inline bool encrypted_encode(std::shared_ptr<MessageBuffer>& message,const ownkey_s& ownkey, const peerkey_s& peerkey)
 {
     uint32_t  msgId = message->m_id;
+   // uint32_t  tagId = message->m_tagId;
     ee2e::Ciphertext *ciphertext = new ee2e::Ciphertext();
     if (!common::encrypt_plaintext(peerkey, message->m_data, *ciphertext))
     {
@@ -243,13 +244,21 @@ inline bool encrypted_encode(std::shared_ptr<MessageBuffer>& message,const ownke
     encrypted_request.set_allocated_token(token);
     std::string str_request;
     encrypted_request.SerializeToString(&str_request);
-    message.reset(new MessageBuffer(msgId,str_request));
+    if(message->hasExtend)
+    {
+        message.reset(new MessageBuffer(msgId,str_request,message->m_extend));
+    }else
+    {
+        message.reset(new MessageBuffer(msgId,str_request));
+    }
+
     return true;
 }
 
 inline bool encrypted_decode(std::shared_ptr<MessageBuffer>& message,const crypto::peerkey_s& peer_key)
 {
     uint32_t id = message->m_id;
+    //uint32_t  tagId = message->m_tagId;
     ee2e::EncryptedRequest res;
 
 //    printf("EncryptedRequest : ");
@@ -274,7 +283,14 @@ inline bool encrypted_decode(std::shared_ptr<MessageBuffer>& message,const crypt
         std::cout << "aes decryption error." << std::endl;
         return false;
     }
-    message.reset(new MessageBuffer(id,str_plaintext));
+    if (message->hasExtend)
+    {
+        message.reset(new MessageBuffer(id,str_plaintext,message->m_extend));
+    }else
+    {
+        message.reset(new MessageBuffer(id,str_plaintext));
+    }
+
     return true;
 }
 

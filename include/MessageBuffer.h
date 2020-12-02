@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_MESSAGEBUFFER_H
 #define MSGTRANS_CLIENT_MESSAGEBUFFER_H
@@ -13,16 +10,34 @@
 #include <cstring>
 #include <memory>
 #include <iostream>
-struct MessageBuffer {
-    uint32_t m_id;
-    std::string m_data;
-    MessageBuffer(uint32_t id, const std::string& data)
+
+struct Extend
+{
+    uint32_t requestId;
+    uint32_t responseId;
+};
+
+
+class MessageBuffer {
+
+public:
+    MessageBuffer(const uint32_t& id, const std::string& data)
     {
+        m_compression = 0;
         m_id = id;
-//        size_t len = strlen(data);
-//        std::cout  << "m_data length :" << len  << std::endl;
         m_data = data;
-        //memcpy(m_data, data, len);
+        hasExtend = false;
+    }
+
+    MessageBuffer(const uint32_t& id, const std::string& data, const Extend& extend)
+    {
+        m_compression = 0;
+        m_id = id;
+//        m_tagId = tagId;
+//        m_extendLength = sizeof(uint32_t);
+        m_data = data;
+        m_extend = extend;
+        hasExtend = true;
     }
 
     ~MessageBuffer()
@@ -33,6 +48,13 @@ struct MessageBuffer {
 //        }
 //        m_data = nullptr;
     }
+    unsigned char m_compression;
+    uint32_t m_id;
+    //uint32_t m_tagId;
+    //uint32_t m_extendLength;
+    std::string m_data;
+    Extend m_extend;
+    bool hasExtend;
 };
 
 

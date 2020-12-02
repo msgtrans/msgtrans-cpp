@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #include <TcpTransportSession.h>
 #include <future>
@@ -33,8 +30,13 @@ void TcpClientChannel::initialize()
     m_connector->onConnect = [&](bool bSuccess)
     {
        // m_delegate->onConnect(bSuccess);
-       m_isConnected = bSuccess;
-       m_connector->setConnectionStatus(bSuccess);
+        m_isConnected = bSuccess;
+        m_connector->setConnectionStatus(bSuccess);
+        if (!bSuccess)
+        {
+            m_onConnect(bSuccess);
+            return;
+        }
         if(bSuccess && MessageTransportClient::ee2e)
         {
             keyExchangeInitiate();
@@ -72,8 +74,8 @@ void TcpClientChannel::initialize()
                 keyExchangeRequest(packages[i]);
             } else
             {
-            dispatchMessage(packages[i]);
-        }
+                dispatchMessage(packages[i]);
+            }
         }
     };
 }
@@ -206,6 +208,8 @@ void TcpClientChannel::keyExchangeInitiate()
     key_exchange_request.SerializeToString(&str_request);
 
     std::shared_ptr<MessageBuffer> buffer = std::make_shared<MessageBuffer>(ee2e::MESSAGE::INITIATE,str_request);
+    //std::shared_ptr<MessageBuffer> buffer(new MessageBuffer(333,str_request) );
+    std::cout << "befor id :" << buffer->m_id << std::endl;
     send(buffer);
 }
 
@@ -241,6 +245,7 @@ void TcpClientChannel::send(std::shared_ptr<MessageBuffer> buff)
 {
     if (m_connector)
     {
+        std::cout << "iD : " << buff->m_id << std::endl;
         //std::shared_ptr<char> packet_buff;
         if (MessageTransportClient::ee2e && (buff->m_id != ee2e::MESSAGE::INITIATE  && buff->m_id != ee2e::MESSAGE::FINALIZE))
         {

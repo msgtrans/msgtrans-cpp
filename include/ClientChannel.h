@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_CLIENTCHANNEL_H
 #define MSGTRANS_CLIENT_CLIENTCHANNEL_H
@@ -24,7 +21,7 @@ public:
     virtual  void send(std::shared_ptr<MessageBuffer> buff) = 0;
     virtual  void close() = 0;
     virtual void setOnConnect(const std::function<void(bool)>& cb) = 0;
-    virtual void setCloseCallBack(const std::function<void()>& cb) = 0;
+    virtual void setCloseCallBack(const std::function<void(bool)>& cb) = 0;
 };
 
 

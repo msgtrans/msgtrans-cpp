@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_TCPCLIENTCHANNEL_H
 #define MSGTRANS_CLIENT_TCPCLIENTCHANNEL_H
@@ -36,7 +33,7 @@ public:
     {
         m_onConnect = cb;
     }
-    void setCloseCallBack(const std::function<void()>& cb)
+    void setCloseCallBack(const std::function<void(bool)>& cb)
     {
         m_onClosed = cb;
     }
@@ -47,7 +44,7 @@ private:
     void keyExchangeRequest(std::shared_ptr<MessageBuffer> message);
 
     std::function<void(bool)> m_onConnect;
-    std::function<void()> m_onClosed;
+    std::function<void(bool)> m_onClosed;
 };
 
 

@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_MESSAGETRANSPORTCLIENT_H
 #define MSGTRANS_CLIENT_MESSAGETRANSPORTCLIENT_H
@@ -11,7 +8,7 @@
 #include "ClientChannel.h"
 #include <string>
 #include <memory>
-#include "crypto.h"
+#include "ee2e/crypto.h"
 
 using namespace crypto;
 

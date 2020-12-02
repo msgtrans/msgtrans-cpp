@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_MESSAGETRANSPORT_H
 #define MSGTRANS_CLIENT_MESSAGETRANSPORT_H

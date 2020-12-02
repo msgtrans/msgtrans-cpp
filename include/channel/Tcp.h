@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2020 HuntLabs
- *
- * Homepage: https://www.huntlabs.net
- * 
- */
+//
+// Created by linsen on 2019/12/10.
+//
 
 #ifndef MSGTRANS_CLIENT_TCP_H
 #define MSGTRANS_CLIENT_TCP_H
@@ -13,6 +10,7 @@
 #include <evpp/tcp_conn.h>
 #include <future>
 #include "ConnectionBase.h"
+#include <mutex>
 
 using namespace evpp;
 
@@ -61,6 +59,7 @@ private:
     evpp::TCPClient* m_client;
     bool m_isConnected = false;
     evpp::EventLoop m_loop;
+    std::mutex m_mutex;
 };
 
 #endif //MSGTRANS_CLIENT_TCP_H
