@@ -46,9 +46,9 @@ $ cmake ..
 $ sudo make install
 ```     
 
-- Protocol Buffers v3.12.4
+- protobuf v3.21.12
     
-    https://github.com/protocolbuffers/protobuf/releases/tag/v3.12.4
+    https://github.com/protocolbuffers/protobuf/releases/tag/v21.12
 
 ```sh
 $ mkdir build
@@ -135,9 +135,9 @@ $ cmake ..
 $ make install
 ```     
 
-- Protocol Buffers v3.12.4
+- Protocol Buffers v3.21.12
     
-    https://github.com/protocolbuffers/protobuf/releases/tag/v3.12.4
+    https://github.com/protocolbuffers/protobuf/releases/tag/v21.12
 
 ```sh
 $ ./configure
@@ -156,7 +156,7 @@ $ cp key_exchange.pb.h ../include/ee2e
 $ cp key_exchange.pb.cc ../src/ee2e
 ```
 
-2. Build
+2. Build for Linux
 
 ```sh
 $ mkdir build
@@ -165,4 +165,13 @@ $ cmake ..
 $ make
 $ make install
 ```  
+
+3. Build for Android
+
+```sh
+cmake \
+  -DANDROID_ABI=arm64-v8a \
+  -DANDROID_PLATFORM=android-21 \
+  -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake ..
+```
 

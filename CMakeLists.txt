@@ -22,6 +22,11 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     #ios
     set(BUILD_SHARED false)
 
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Android") 
+
+    #android
+    set(BUILD_SHARED false)
+
 else()
     MESSAGE(FATAL_ERROR "Unsupported platform.")
 endif()
@@ -36,6 +41,8 @@ include_directories(
     ${INCLUDE_BASE}/common
     ${INCLUDE_BASE}/channel
     ${INCLUDE_BASE}/ee2e
+    /opt/homebrew/Cellar/openssl@1.1/1.1.1t/include
+    /opt/homebrew/Cellar/protobuf/21.12/include
 )
 
 LINK_DIRECTORIES(
