@@ -255,8 +255,8 @@ bool crypto::ecdsa_sign(const uint8_t ec_private_key[CRYPTO_EC_PRIV_KEY_LEN], ui
 
         ret = 0;
 
-        BN_bn2bin(signature->s, &sign[0]);
-        BN_bn2bin(signature->r, &sign[CRYPTO_ECDSA_SIG_s_LEN]);
+//        BN_bn2bin(signature->s, &sign[0]);
+//        BN_bn2bin(signature->r, &sign[CRYPTO_ECDSA_SIG_s_LEN]);
 
         ECDSA_SIG_free(signature);
     }
@@ -318,8 +318,8 @@ bool crypto::ecdsa_verify(const uint8_t ec_public_key[CRYPTO_EC_PUB_KEY_LEN], co
             goto err;
         }
 
-        BN_bin2bn(&sign[0],  CRYPTO_ECDSA_SIG_s_LEN, signature->s);
-        BN_bin2bn(&sign[CRYPTO_ECDSA_SIG_s_LEN],  CRYPTO_ECDSA_SIG_r_LEN, signature->r);
+//        BN_bin2bn(&sign[0],  CRYPTO_ECDSA_SIG_s_LEN, signature->s);
+//        BN_bin2bn(&sign[CRYPTO_ECDSA_SIG_s_LEN],  CRYPTO_ECDSA_SIG_r_LEN, signature->r);
 
         int verifyret = ECDSA_do_verify(hash, hash_len, signature, eckey);
 
